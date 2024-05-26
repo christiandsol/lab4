@@ -198,12 +198,12 @@ void write_superblock(int fd) {
 
 	// TODO It's all yours
 	// TODO finish the superblock number setting
-	superblock.s_inodes_count = NUM_INODES;
+	superblock.s_inodes_count = NUM_INODES/8;
 	superblock.s_blocks_count = NUM_BLOCKS;
 	superblock.s_r_blocks_count = 0;
 	superblock.s_free_blocks_count = NUM_FREE_BLOCKS;
 	superblock.s_free_inodes_count = NUM_FREE_INODES;
-	superblock.s_first_data_block = 0; /* First Data Block */
+	superblock.s_first_data_block = 1; /* First Data Block */
 	superblock.s_log_block_size = 0;					/* 1024 */
 	superblock.s_log_frag_size = 0;						/* 1024 */
 	superblock.s_blocks_per_group = 8 * BLOCK_SIZE;
@@ -261,12 +261,12 @@ void write_block_group_descriptor_table(int fd) {
 
 	// TODO It's all yours
 	// TODO finish the block group descriptor number setting
-	block_group_descriptor.bg_block_bitmap = -1;
-	block_group_descriptor.bg_inode_bitmap = -1;
-	block_group_descriptor.bg_inode_table = -1;
-	block_group_descriptor.bg_free_blocks_count = -1;
-	block_group_descriptor.bg_free_inodes_count = -1;
-	block_group_descriptor.bg_used_dirs_count = -1;
+	block_group_descriptor.bg_block_bitmap = BLOCK_BITMAP_BLOCKNO;
+	block_group_descriptor.bg_inode_bitmap = INODE_BITMAP_BLOCKNO;
+	block_group_descriptor.bg_inode_table = INODE_TABLE_BLOCKNO;
+	block_group_descriptor.bg_free_blocks_count = NUM_FREE_BLOCKS;
+	block_group_descriptor.bg_free_inodes_count = NUM_FREE_INODES; 
+	block_group_descriptor.bg_used_dirs_count = 2; /* Lost+Found and rootdir*/ 
 
 	ssize_t size = sizeof(block_group_descriptor);
 	if (write(fd, &block_group_descriptor, size) != size) {

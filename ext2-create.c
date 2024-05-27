@@ -286,7 +286,7 @@ void write_block_bitmap(int fd)
 	u8 map_value[BLOCK_SIZE] = {0};
 
     for (int i = 0; i < (LAST_BLOCK + 1) >> 3;  i++) {
-        map_value[i] = 0xFF ? i != 2 : 0xFE;
+        map_value[i] = i != 2 ? 0xFF : 0xFE;
     }
 
 
@@ -308,7 +308,7 @@ void write_inode_bitmap(int fd)
 	u8 map_value[BLOCK_SIZE] = {0};
 
     for (int i = 0; i < (LAST_INO >> 3) + 1;  i++) {
-        map_value[i] = 0xFF ? i != 1 : 0xF8;
+        map_value[i] = i != 1 ? 0xFF : 0xF8;
     }
 
 	if (write(fd, map_value, BLOCK_SIZE) != BLOCK_SIZE)

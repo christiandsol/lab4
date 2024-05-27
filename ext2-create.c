@@ -391,7 +391,7 @@ void write_inode_table(int fd) {
 	hello_world_inode.i_mtime = current_time;
 	hello_world_inode.i_dtime = 0;
 	hello_world_inode.i_gid = 1000;
-	hello_world_inode.i_links_count = 2;
+	hello_world_inode.i_links_count = 1;
 	hello_world_inode.i_blocks = 2; 
 	hello_world_inode.i_block[0] = HELLO_WORLD_FILE_BLOCKNO;
 	write_inode(fd, HELLO_WORLD_INO, &hello_world_inode);
@@ -404,7 +404,7 @@ void write_inode_table(int fd) {
         | EXT2_S_IROTH;
     const char *link_target = "hello-world"; // target path of the symbolic link
 	hello.i_uid = 1000;
-	hello.i_size = 1024;
+	hello.i_size = strlen(link_target);
 	hello.i_atime = current_time;
 	hello.i_ctime = current_time;
 	hello.i_mtime = current_time;
@@ -415,6 +415,7 @@ void write_inode_table(int fd) {
 	hello.i_block[0] = HELLO_WORLD_FILE_BLOCKNO;
     memcpy(hello.i_block, link_target, hello.i_size);
 	write_inode(fd, HELLO_INO, &hello);
+
 }
 
 void write_root_dir_block(int fd)

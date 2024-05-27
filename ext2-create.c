@@ -198,24 +198,24 @@ void write_superblock(int fd) {
 
 	// TODO It's all yours
 	// TODO finish the superblock number setting
-	superblock.s_inodes_count = NUM_INODES/8;
+	superblock.s_inodes_count = NUM_INODES;
 	superblock.s_blocks_count = NUM_BLOCKS;
 	superblock.s_r_blocks_count = 0;
 	superblock.s_free_blocks_count = NUM_FREE_BLOCKS;
 	superblock.s_free_inodes_count = NUM_FREE_INODES;
-	superblock.s_first_data_block = 1; /* First Data Block */
+	superblock.s_first_data_block = SUPERBLOCK_BLOCKNO; /* First Data Block */
 	superblock.s_log_block_size = 0;					/* 1024 */
 	superblock.s_log_frag_size = 0;						/* 1024 */
 	superblock.s_blocks_per_group = 8 * BLOCK_SIZE;
 	superblock.s_frags_per_group = 8 * BLOCK_SIZE;
-	superblock.s_inodes_per_group = NUM_INODES/8;
+	superblock.s_inodes_per_group = NUM_INODES;
 	superblock.s_mtime = 0;				/* Mount time */
 	superblock.s_wtime = current_time;	/* Write time */
 	superblock.s_mnt_count         = 0; /* Number of times mounted so far */
-	superblock.s_max_mnt_count     = 0; /* Make this unlimited */
+	superblock.s_max_mnt_count     = -1; /* Make this unlimited */
 	superblock.s_magic = EXT2_SUPER_MAGIC; /* ext2 Signature */
-	superblock.s_state             = 0; /* File system is clean */
-	superblock.s_errors            = 0; /* Ignore the error (continue on) */
+	superblock.s_state             = 1; /* File system is clean */
+	superblock.s_errors            = 1; /* Ignore the error (continue on) */
 	superblock.s_minor_rev_level   = 0; /* Leave this as 0 */
 	superblock.s_lastcheck = current_time; /* Last check time */
 	superblock.s_checkinterval     = 1; /* Force checks by making them every 1 second */
@@ -283,7 +283,18 @@ void write_block_bitmap(int fd)
 	}
 
 	// TODO It's all yours
-	u8 map_value[BLOCK_SIZE];
+	u8 map_value[BLOCK_SIZE] = {0};
+
+    map_value[0] = 0xFF;  
+    map_value[1] = 0xFF;
+    map_value[2] = 0xFF;
+    map_value[3] = 0xFF;
+    map_value[4] = 0x00; //Blocks 32-39 are free
+    
+    for (int i = 0; i <= LAST_BLOCK; i++)
+    {
+        map_value[i / 8] |= 1 << (i % 8);
+    }
 
 	if (write(fd, map_value, BLOCK_SIZE) != BLOCK_SIZE)
 	{

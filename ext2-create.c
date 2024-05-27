@@ -375,7 +375,7 @@ void write_inode_table(int fd) {
 	root_inode.i_links_count = 3;
 	root_inode.i_blocks = 1; /* These are oddly 512 blocks */
 	root_inode.i_block[0] = ROOT_DIR_BLOCKNO;
-	write_inode(fd, EXT2_ROOT_INO, &lost_and_found_inode);
+	write_inode(fd, EXT2_ROOT_INO, &root_inode);
 
 
     struct ext2_inode hello_world_inode= {0};
@@ -394,7 +394,7 @@ void write_inode_table(int fd) {
 	hello_world_inode.i_links_count = 1;
 	hello_world_inode.i_blocks = 1; 
 	hello_world_inode.i_block[0] = HELLO_WORLD_FILE_BLOCKNO;
-	write_inode(fd, HELLO_WORLD_INO, &lost_and_found_inode);
+	write_inode(fd, HELLO_WORLD_INO, &hello_world_inode);
 
     struct ext2_inode hello = {0};
     hello.i_mode = EXT2_S_IFREG
@@ -412,7 +412,7 @@ void write_inode_table(int fd) {
 	hello.i_links_count = 1;
 	hello.i_blocks = 1; 
 	hello.i_block[0] = HELLO_WORLD_FILE_BLOCKNO;
-	write_inode(fd, HELLO_INO, &lost_and_found_inode);
+	write_inode(fd, HELLO_INO, &hello);
 
 }
 

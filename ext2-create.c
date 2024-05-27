@@ -285,7 +285,7 @@ void write_block_bitmap(int fd)
 	// TODO It's all yours
 	u8 map_value[BLOCK_SIZE] = {0};
     for (int i = 0; i < LAST_BLOCK;  i++) {
-        map_value[i] = 1;
+        map_value[i / 8] = (1 << (i % 8));
     }
 
 

@@ -386,9 +386,9 @@ void write_inode_table(int fd) {
         | EXT2_S_IWUSR
         | EXT2_S_IRGRP
         | EXT2_S_IROTH;
-    char *str = "Hello World\0";
+    char *str = "Hello world\0";
 	hello_world_inode.i_uid = 1000;
-	hello_world_inode.i_size = strlen(str);
+	hello_world_inode.i_size = strlen(str) + 1;
 	hello_world_inode.i_atime = current_time;
 	hello_world_inode.i_ctime = current_time;
 	hello_world_inode.i_mtime = current_time;

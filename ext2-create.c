@@ -380,15 +380,15 @@ void write_inode_table(int fd) {
 	root_inode.i_block[0] = ROOT_DIR_BLOCKNO;
 	write_inode(fd, EXT2_ROOT_INO, &root_inode);
 
-
     struct ext2_inode hello_world_inode= {0};
     hello_world_inode.i_mode = EXT2_S_IFREG
         | EXT2_S_IRUSR
         | EXT2_S_IWUSR
         | EXT2_S_IRGRP
         | EXT2_S_IROTH;
+    char *str = "Hello World\0";
 	hello_world_inode.i_uid = 1000;
-	hello_world_inode.i_size = 1024;
+	hello_world_inode.i_size = strlen(str);
 	hello_world_inode.i_atime = current_time;
 	hello_world_inode.i_ctime = current_time;
 	hello_world_inode.i_mtime = current_time;

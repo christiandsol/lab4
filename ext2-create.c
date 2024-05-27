@@ -374,9 +374,27 @@ void write_root_dir_block(int fd)
 
 	bytes_remaining -= parent_entry.rec_len;
 
-	struct ext2_dir_entry fill_entry = {0};
-	fill_entry.rec_len = bytes_remaining;
-	dir_entry_write(fill_entry, fd);
+    struct ext2_dir_entry lost_and_found_entry = {0};
+    dir_entry_set(lost_and_found_entry, LOST_AND_FOUND_INO, "lost+found");
+    dir_entry_write(lost_and_found_entry, fd);
+
+    bytes_remaining -= lost_and_found_entry.rec_len;
+
+    struct ext2_dir_entry hello_world_entry = {0};
+    dir_entry_set(hello_world_entry, HELLO_WORLD_INO, "hello-world");
+    dir_entry_write(hello_world_entry, fd);
+
+    bytes_remaining -= hello_world_entry.rec_len;
+
+    struct ext2_dir_entry hello_entry = {0};
+    dir_entry_set(hello_entry, HELLO_INO, "hello");
+    dir_entry_write(hello_entry, fd);
+
+    bytes_remaining -= hello_entry.rec_len;
+
+    struct ext2_dir_entry fill_entry = {0};
+    fill_entry.rec_len = bytes_remaining;
+    dir_entry_write(fill_entry, fd);
 }
 
 void write_lost_and_found_dir_block(int fd) {
@@ -407,7 +425,27 @@ void write_lost_and_found_dir_block(int fd) {
 
 void write_hello_world_file_block(int fd)
 {
-	// TODO It's all yours
+    // TODO It's all yours
+    off_t off = BLOCK_OFFSET(HELLO_WORLD_FILE_BLOCKNO);
+    off = lseek(fd, off, SEEK_SET);
+    if (off == -1) {
+        errno_exit("lseek");
+    }
+
+    char content[] = "Hello world\n";
+    ssize_t size = sizeof(content);
+
+    if (write(fd, content, size) != size) {
+        errno_exit("write");
+    }
+
+    // Fill the remaining space in the block with zero bytes
+    char zero_buffer[BLOCK_SIZE - size];
+    memset(zero_buffer, 0, sizeof(zero_buffer));
+
+    if (write(fd, zero_buffer, sizeof(zero_buffer)) != sizeof(zero_buffer)) {
+        errno_exit("write");
+    }
 }
 
 int main(int argc, char *argv[]) {

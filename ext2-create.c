@@ -285,16 +285,6 @@ void write_block_bitmap(int fd)
 	// TODO It's all yours
 	u8 map_value[BLOCK_SIZE] = {0};
 
-    map_value[0] = 0xFF;  
-    map_value[1] = 0xFF;
-    map_value[2] = 0xFF;
-    map_value[3] = 0xFF;
-    map_value[4] = 0x00; //Blocks 32-39 are free
-    
-    for (int i = 0; i <= LAST_BLOCK; i++)
-    {
-        map_value[i / 8] |= 1 << (i % 8);
-    }
 
 	if (write(fd, map_value, BLOCK_SIZE) != BLOCK_SIZE)
 	{
@@ -363,7 +353,30 @@ void write_inode_table(int fd) {
 
 void write_root_dir_block(int fd)
 {
-	// TODO It's all yours
+    //TODO
+	off_t off = BLOCK_OFFSET(ROOT_DIR_BLOCKNO);
+	off = lseek(fd, off, SEEK_SET);
+	if (off == -1) {
+		errno_exit("lseek");
+	}
+
+	ssize_t bytes_remaining = BLOCK_SIZE;
+
+	struct ext2_dir_entry current_entry = {0};
+	dir_entry_set(current_entry, EXT2_ROOT_INO, ".");
+	dir_entry_write(current_entry, fd);
+
+	bytes_remaining -= current_entry.rec_len;
+
+	struct ext2_dir_entry parent_entry = {0};
+	dir_entry_set(parent_entry, EXT2_ROOT_INO, "..");
+	dir_entry_write(parent_entry, fd);
+
+	bytes_remaining -= parent_entry.rec_len;
+
+	struct ext2_dir_entry fill_entry = {0};
+	fill_entry.rec_len = bytes_remaining;
+	dir_entry_write(fill_entry, fd);
 }
 
 void write_lost_and_found_dir_block(int fd) {

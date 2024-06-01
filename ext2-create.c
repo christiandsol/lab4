@@ -292,7 +292,7 @@ void write_block_bitmap(int fd)
     }
 
     //bitmap padding
-    for (int i = (NUM_BLOCKS >> 3) - 1; i < (BLOCK_SIZE); i++) {
+    for (int i = (NUM_BLOCKS >> 3); i < (BLOCK_SIZE); i++) {
         map_value[i] =  0xFF;
     }
 

@@ -291,6 +291,10 @@ void write_block_bitmap(int fd)
         map_value[i] = i != 2 ? 0xFF  : 0x7F;
     }
 
+    //bitmap padding
+    for (int i = (BLOCK_SIZE >> 3); i < (BLOCK_SIZE); i++) {
+        map_value[i] =  0xFF;
+    }
 
 	if (write(fd, map_value, BLOCK_SIZE) != BLOCK_SIZE)
 	{
@@ -312,6 +316,12 @@ void write_inode_bitmap(int fd)
     for (int i = 0; i < (LAST_INO >> 3) + 1;  i++) {
         map_value[i] = i != 1 ? 0xFF : 0x1F;
     }
+
+    //inode padding
+    for (int i = (NUM_INODES >> 3); i < (BLOCK_SIZE); i++) {
+        map_value[i] =  0xFF;
+    }
+
 
 	if (write(fd, map_value, BLOCK_SIZE) != BLOCK_SIZE)
 	{
